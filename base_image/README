@@ -1,0 +1,11 @@
+This base image aims to provide a monitorable container runtime on which you run your different images.
+
+It contains:
+- consul (local agent for performing service discovery)
+- collectd (local agent for collecting metrics and acting as a statsd server allowing  your application to push business metrics)
+- fluentd (local agent for collecting logs)
+
+The following environment variables define the differents components on which your container is going to connect:
+CONSUL_JOIN_IP: consul master on which local agent will connect
+LOG_SERVER_NAME: log server name registered in consul (something like logging.service.consul)
+METRICS_DATABASE_NAME: metrics database name registered in consul (something like metrics.service.consul)
