@@ -111,13 +111,41 @@ sudo docker run -p 8400:8400 -p 8500:8500 -p 8600:53/udp -h consul-server --name
 ```
 
 - Run the log database (Mongodb)
+```
+sudo docker run --name mongo -d -p 27017:27017 mongo:3.2
+```
 
 - Run the log server with the previously mentioned configuration :
 ```
 sudo docker run -d --name fluentd-server -p 24224:24224 -v /tmp/fluentd:/fluentd/etc -e FLUENTD_CONF=test.conf fluent/fluentd:latest
 ```
 
+With a configuration to output logs into mongodb:
+```
+<match mongo.**>
+  type mongo
+  host <mongo_container_ip>
+  port 27017
+  database fluentd
+  collection logs
+
+  # key name of timestamp
+  time_key time
+
+  # flush
+  flush_interval 10s
+</match>
+```
+
+And do not forget to replace mongo_container_ip using :
+```
+sudo docker inspect -f '{{.NetworkSettings.IPAddress}}' mongo
+```
+
 - Run the metrics database (InfluxDB)
+```
+sudo docker run -d -p 8083:8083 -p 8086:8086 tutum/influxdb
+```
 
 - Run dashboard (Grafana) 
 
